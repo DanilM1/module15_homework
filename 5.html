@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #form {
+                margin: 0 auto;
+                width: 50%;
+            }
+            input {
+                display: block;
+            }
+            #message {
+                width: 65%;
+            }
+            form {
+                display: flex;
+                justify-content: space-between;
+            }
+            #message, #messages, p {
+                border: 1px solid blue;
+            }
+            #messages {
+                margin-top: 1%;
+                height: 50vh;
+                overflow: auto;
+            }
+            p {
+                padding:1%;
+                max-width: 72.3%;
+                margin: 1%;
+            }
+            @media (max-width: 723px) {
+                * {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    width: 96vw !important;
+                    margin-top: 1% !important;
+                }
+                form {
+                    flex-direction: column;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="form">
+            <form action="#">
+                <input type="text" id="message" placeholder="Здесь вводится текст сообщения">
+                <input type="submit" class="input" id="send" value="Отправить">
+                <input type="submit" class="input" id="geolocation" value="Гео-локация">
+            </form>
+            <div id="messages"></div>
+        </div>
+        <script>
+            const
+            message = document.querySelector('#message'),
+            send_ = document.querySelector('#send'),
+            geolocation = document.querySelector('#geolocation'),
+            messages = document.querySelector('#messages');
+            
+            
+
+            geolocation.addEventListener('click', () => {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const {coords} = position;
+                        var p = document.createElement('p');
+                        var a = document.createElement('a');
+                        a.href = `http://www.openstreetmap.org/index.html?lat=${coords.latitude}&lon=${coords.longitude}`;
+                        a.textContent = "Гео-локация";
+                        p.style.maxWidth = "100%";
+                        p.style.marginLeft = "23.4%";
+                        p.style.textAlign = "right";
+                        p.appendChild(a);
+                        messages.appendChild(p);
+                    });
+                }
+                else alert("Информация о местоположении недоступна");
+            });
+
+            send_.addEventListener('click', () => {
+                if (message.value !== "") {
+                    var p = document.createElement('p');
+                    p.textContent = message.value;
+                    messages.appendChild(p);
+                    var socket = new WebSocket('wss://echo.websocket.org/');
+                    socket.onopen = function (event) {
+                        socket.send(message.value);
+                    };
+                    message.value = "";
+
+                    socket.onmessage = function(event) {
+                        var p = document.createElement('p');
+                        p.textContent = event.data;
+                        p.style.maxWidth = "100%";
+                        p.style.marginLeft = "23.4%";
+                        p.style.textAlign = "right";
+                        messages.appendChild(p);
+                    };
+
+                    socket.onerror = function(error) {
+                        alert("Ошибка " + error.message);
+                    };
+                }
+            });
+        </script>
+    </body>
+</html>

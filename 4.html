@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <button>Параметры</button>
+        <p></p>
+        <script>
+            const
+            button = document.querySelector('button'),
+            p = document.querySelector('p');
+            button.addEventListener('click', () => {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const {coords} = position;
+                        fetch("https://api.ipgeolocation.io/timezone?apiKey=32bcd4a6e4b548968e7afcdb682ac679&lat=" + coords.latitude + "&long=" + coords.longitude)
+                        .then((response) => {return response.json();})
+                        .then((data) => {
+                            p.textContent = "Ваша временная зона: " + data['timezone'] + ' и ваше местное время: ' + data['date_time_txt'];
+                        })
+                        .catch(() => {alert('error')});
+                    });
+                }
+                else alert("Информация о местоположении недоступна");
+            });
+        </script>
+    </body>
+</html>

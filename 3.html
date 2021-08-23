@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <button>Параметры</button>
+        <p></p>
+        <script>
+            const
+            button = document.querySelector('button'),
+            p = document.querySelector('p');
+            button.addEventListener('click', () => {
+                p.textContent = "Параметры вашего экрана: ширина - " + window.screen.width + " px, высота - " + window.screen.height + " px. ";
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const {coords} = position;
+                        p.textContent += `Координаты вашего расположения: широта - ${coords.latitude}, долгота - ${coords.longitude}.`;
+                    });
+                }
+                else alert("Информация о местоположении недоступна");
+            });
+        </script>
+    </body>
+</html>
